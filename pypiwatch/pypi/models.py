@@ -2,10 +2,9 @@ from django.db import models
 import requests
 from natsort import natsorted
 
-# Create your models here.
 class Package(models.Model):
     name = models.CharField(max_length=200)
-    url = models.CharField(max_length=500)
+    url = models.CharField(max_length=500, blank=True)
     version = models.CharField(max_length=25)
     
     def latest_version_known(self):
@@ -23,6 +22,7 @@ class Package(models.Model):
         return version
 
     def get_versions(self, latest=False):
+        # TODO: Make compatible with other origins(self hosted pypi's)
         url = "http://pypi.python.org/pypi/{package_name}/json".format(
                 package_name=self.name)
         result = requests.get(url).json()
