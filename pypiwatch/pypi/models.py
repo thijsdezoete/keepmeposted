@@ -14,9 +14,9 @@ class Package(models.Model):
             return False
         return True
 
-    def get_version(self):
+    def get_version(self, update=False):
         version = self.get_versions(latest=True)
-        if self.version != version:
+        if self.version != version and update:
             self.version = version
             self.save()
         
