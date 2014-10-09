@@ -1,0 +1,13 @@
+<html>
+    <head><title>Package watch</title></head>
+    <body>
+        <h1>Package watchers -> latest version</h1>
+        <br/>
+        <ul>
+        {% for watcher in watchers %}
+        <li>{{ watcher.email }} -> {{ watcher.package }}[{{watcher.package.get_version}}]</li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>
+
