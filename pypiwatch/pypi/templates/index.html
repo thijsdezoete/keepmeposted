@@ -3,9 +3,25 @@
     <body>
         <h1>Package watchers -> latest version</h1>
         <br/>
+        <h2>Subscribe:</h2>
+
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'submit' %}" method="post">
+{% csrf_token %}
+{{ subscription_form.as_p }}
+<input type="submit"/>
+</form>
+        <hr/>
         <ul>
-        {% for watcher in watchers %}
-        <li>{{ watcher.email }} -> {{ watcher.package }}[{{watcher.package.get_version}}]</li>
+        {% for pkg in packages %}
+        <li>{{ pkg.name }} [{{pkg.get_version}}] <ul>
+            {% for watchr in pkg.watchers.all %}
+            <li>{{watchr.email}}</li>
+            {%endfor %}
+        </ul>
+        <!--{ pkg_wtchr.package }[{pkg_wtchr.package.get_version}] --> 
+        </li>
         {% endfor %}
         </ul>
     </body>

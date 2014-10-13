@@ -5,7 +5,8 @@ from natsort import natsorted
 class Package(models.Model):
     name = models.CharField(max_length=200)
     url = models.CharField(max_length=500, blank=True)
-    version = models.CharField(max_length=25)
+    version = models.CharField(max_length=25, blank=True)
+    watchers = models.ManyToManyField('Watcher', through='PackageWatchers')
     
     def latest_version_known(self):
         version = self.get_versions(latest=True)
@@ -44,7 +45,7 @@ class Package(models.Model):
 
 class Watcher(models.Model):
     email = models.CharField(max_length=300)
-    package = models.ForeignKey(Package)
+    packages = models.ManyToManyField('Package', through='PackageWatchers')
 
     def __unicode__(self):
         return self.email
@@ -56,3 +57,10 @@ class Watcher(models.Model):
 class PackageWatchers(models.Model):
     watcher = models.ForeignKey(Watcher)
     package = models.ForeignKey(Package)
+
+    def __unicode__(self):
+        return "{watcher}->{package}".format(watcher=self.watcher.email, package=self.package.name)
+
+    def __str__(self):
+        return "{watcher}->{package}".format(watcher=self.watcher.email, package=self.package.name)
+
