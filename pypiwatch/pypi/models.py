@@ -53,7 +53,7 @@ class Watcher(models.Model):
     def __str__(self):
         return self.email
 
-# TODO: Start using this model:
+
 class PackageWatchers(models.Model):
     watcher = models.ForeignKey(Watcher)
     package = models.ForeignKey(Package)
