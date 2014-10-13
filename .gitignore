@@ -56,3 +56,4 @@ target/
 # mail settings
 settings_mail.py
 pypiwatch/settings_mail.py
+*settings_mail.py
