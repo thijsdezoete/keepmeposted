@@ -1,0 +1,20 @@
+<html>
+    <head><title>Package watch</title></head>
+    <body>
+        <h2>Subscription(s):</h2>
+        <ul>
+        {% for pkg in packages %}
+        <li>{{ pkg.name }} [{{pkg.get_version}}]</li> 
+        {% endfor %}
+        </ul>
+        <hr />
+        <h2>Subscribe to another package</h2>
+        <form action="{% url 'submit' %}" method="post">
+        {% csrf_token %}
+        {{ subscription_form.as_p }}
+        <input type="submit"/>
+        </form>
+        <a href="/">Home</a>
+    </body>
+</html>
+

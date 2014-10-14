@@ -17,6 +17,23 @@ def index(request, form=None):
     )
     
 
+def thankyou(request, emailid):
+    try:
+        watcher = Watcher.objects.get(id=emailid)
+        packages = watcher.packages.all()
+    except Watcher.DoesNotExist:
+        return redirect('/')
+
+    subform = SubscribeForm(initial={'email': watcher})
+    return render_to_response(
+            'thanks.html', 
+            {'packages': packages,
+             'subscription_form': subform,
+            },
+            context_instance=RequestContext(request)
+    )
+    
+
 def submit(request):
     package_form = SubscribeForm(request.POST)
     if request.method != 'POST':
@@ -38,4 +55,4 @@ def submit(request):
             return index(request)
 
     PackageWatchers.objects.get_or_create(watcher=watcher, package=package)
-    return redirect('/')
+    return redirect('/thankyou/%s/' % watcher.id)
