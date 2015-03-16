@@ -2,6 +2,8 @@ from django.shortcuts import render_to_response, redirect
 from .forms import SubscribeForm
 from django.template.context import RequestContext
 from .models import PackageWatchers, Watcher, Package
+from .github import check_repo
+import contact
 
 # Create your views here.
 def index(request, form=None):
@@ -43,16 +45,30 @@ def submit(request):
     
     # process data
     email = package_form.cleaned_data.get('email')
+    repo_url = package_form.cleaned_data.get('repo_url')
     package_name = package_form.cleaned_data.get('package_name')
-    watcher, w_created= Watcher.objects.get_or_create(email=email)
-    package, p_created = Package.objects.get_or_create(name=package_name)
-    if p_created:
-        # verify if valid package
-        try:
-            package.get_version()
-        except Exception as e:
-            package.delete()
-            return index(request)
+    packages = []
+    if repo_url:
+        print check_repo(repo_url)
+        packages = [(x,v) for x,v in check_repo(repo_url)]
+    if package_name:
+        packages.append((package_name,None))
 
-    PackageWatchers.objects.get_or_create(watcher=watcher, package=package)
+    print repo_url, package_name
+    watcher, w_created= Watcher.objects.get_or_create(email=email)
+    for package in packages:
+        package_name = package[0]
+        package_version = package[1]
+        package, p_created = Package.objects.get_or_create(name=package_name)
+        if p_created:
+            # verify if valid package
+            try:
+                _v = package.get_version()
+                if _v !=package_version:
+                    contact.update_contact(package, watcher)
+            except Exception as e:
+                package.delete()
+                return index(request)
+
+        PackageWatchers.objects.get_or_create(watcher=watcher, package=package)
     return redirect('/thankyou/%s/' % watcher.id)

@@ -8,9 +8,9 @@ class Package(models.Model):
     version = models.CharField(max_length=25, blank=True)
     watchers = models.ManyToManyField('Watcher', through='PackageWatchers')
     
-    def latest_version_known(self):
-        version = self.get_versions(latest=True)
-        if self.version != version:
+    def latest_version_known(self, version=None):
+        _version = self.get_versions(latest=True)
+        if self.version != _version or _version != version:
             return False
         return True
 
@@ -28,9 +28,6 @@ class Package(models.Model):
                 package_name=self.name)
         result = requests.get(url).json()
 
-        # result['info']['version']
-        # result['releases']
-
         if latest:
             return result['info']['version']
 
@@ -38,7 +35,7 @@ class Package(models.Model):
 
 
     def __unicode__(self):
-        return self.name
+        return self.__str__()
 
     def __str__(self):
         return self.name
@@ -48,7 +45,7 @@ class Watcher(models.Model):
     packages = models.ManyToManyField('Package', through='PackageWatchers')
 
     def __unicode__(self):
-        return self.email
+        return self.__str__()
 
     def __str__(self):
         return self.email
@@ -59,7 +56,7 @@ class PackageWatchers(models.Model):
     package = models.ForeignKey(Package)
 
     def __unicode__(self):
-        return "{watcher}->{package}".format(watcher=self.watcher.email, package=self.package.name)
+        return self.__str__()
 
     def __str__(self):
         return "{watcher}->{package}".format(watcher=self.watcher.email, package=self.package.name)
