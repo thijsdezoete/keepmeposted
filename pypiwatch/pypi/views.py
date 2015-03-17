@@ -49,7 +49,6 @@ def submit(request):
     package_name = package_form.cleaned_data.get('package_name')
     packages = []
     if repo_url:
-        print check_repo(repo_url)
         packages = [(x,v) for x,v in check_repo(repo_url)]
     if package_name:
         packages.append((package_name,None))
@@ -65,7 +64,7 @@ def submit(request):
             try:
                 _v = package.get_version()
                 if _v !=package_version:
-                    contact.update_contact(package, watcher)
+                    contact.notify_watcher(package, watcher)
             except Exception as e:
                 package.delete()
                 return index(request)

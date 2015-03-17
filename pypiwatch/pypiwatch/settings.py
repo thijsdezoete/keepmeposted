@@ -7,6 +7,9 @@ https://docs.djangoproject.com/en/1.7/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
+# Make requests quiet about ssl
+import requests.packages.urllib3 as urllib3
+urllib3.disable_warnings()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -90,4 +93,5 @@ EMAIL_HOST_USER = 'my gmail account'
 EMAIL_HOST_PASSWORD = 'my gmail account password'
 DEFAULT_FROM_EMAIL = 'my gmail account'
 DEFAULT_TO_EMAIL = 'to email'
+
 from settings_mail import *
